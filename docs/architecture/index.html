@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.4.0">
 <title data-rh="true">Architecture | SlateDB</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://slatedb.io/img/slatedb-opengraph.jpg"><meta data-rh="true" name="twitter:image" content="https://slatedb.io/img/slatedb-opengraph.jpg"><meta data-rh="true" property="og:url" content="https://slatedb.io/docs/architecture"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Architecture | SlateDB"><meta data-rh="true" name="description" content="SlateDB is a log-structured merge-tree (LSM-tree). If you are unfamiliar with LSM-trees, we recommend reading the following resources:"><meta data-rh="true" property="og:description" content="SlateDB is a log-structured merge-tree (LSM-tree). If you are unfamiliar with LSM-trees, we recommend reading the following resources:"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://slatedb.io/docs/architecture"><link data-rh="true" rel="alternate" href="https://slatedb.io/docs/architecture" hreflang="en"><link data-rh="true" rel="alternate" href="https://slatedb.io/docs/architecture" hreflang="x-default"><link rel="stylesheet" href="/assets/css/styles.b733f3f5.css">
-<script src="/assets/js/runtime~main.ac5319d3.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.697390b8.js" defer="defer"></script>
 <script src="/assets/js/main.0620a974.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -14,7 +14,7 @@
 <li><a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Overview" target="_blank" rel="noopener noreferrer">RocksDB Overview</a></li>
 <li><a href="https://skyzh.github.io/mini-lsm/" target="_blank" rel="noopener noreferrer">Mini-LSM</a></li>
 </ul>
-<p>This page contains a high-level overview of SlateDB&#x27;s architecture, read/write paths, manifest, and compaction. For more details, see SlateDB&#x27;s <a href="https://github.com/slatedb/slatedb/tree/main/docs" target="_blank" rel="noopener noreferrer">design documents</a>.</p>
+<p>This page contains a high-level overview of SlateDB&#x27;s architecture, read/write paths, manifest, and compaction. For more details, see SlateDB&#x27;s <a href="https://github.com/slatedb/slatedb/tree/main/rfcs" target="_blank" rel="noopener noreferrer">design documents</a>.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="overview">Overview<a class="hash-link" aria-label="Direct link to Overview" title="Direct link to Overview" href="/docs/architecture#overview">​</a></h2>
 <p>The following diagram shows the architecture of SlateDB:</p>
 <p><img decoding="async" loading="lazy" alt="Example banner" src="/assets/images/architecture-0693e6671885f6d2c02639b4b3d403a7.png" width="1115" height="793" class="img_ev3q"></p>
@@ -68,7 +68,7 @@
 <li><strong>Scheduler</strong>: Schedules compaction tasks. The scheduler is responsible for determining which SSTs to compact and when to compact them. Though pluggable, the current implementation is a size-tiered compaction strategy.</li>
 <li><strong>Executor</strong>: Executes compaction tasks. The executor is responsible for reading SSTs from the object store, merging them, and writing the results back to the object store.</li>
 </ul>
-<p>For more details, see SlateDB&#x27;s <a href="https://github.com/slatedb/slatedb/blob/main/docs/0002-compaction.md" target="_blank" rel="noopener noreferrer">compaction design document</a>.</p>
+<p>For more details, see SlateDB&#x27;s <a href="https://github.com/slatedb/slatedb/blob/main/rfcs/0002-compaction.md" target="_blank" rel="noopener noreferrer">compaction design document</a>.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="backpressure">Backpressure<a class="hash-link" aria-label="Direct link to Backpressure" title="Direct link to Backpressure" href="/docs/architecture#backpressure">​</a></h3>
 <p>SlateDB uses a backpressure mechanism to prevent writes from overwhelming the compaction process. If the number of SSTs in L0 exceeds a maximum limit (<code>l0_max_ssts</code>), writes to L0 are paused until the compactor can catch up. This cascades upward to the memtable flusher, which will be block writes to its in-memory memtable if <code>max_unflushed_memtable</code> is exceeded.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="garbage-collection">Garbage Collection<a class="hash-link" aria-label="Direct link to Garbage Collection" title="Direct link to Garbage Collection" href="/docs/architecture#garbage-collection">​</a></h2>
